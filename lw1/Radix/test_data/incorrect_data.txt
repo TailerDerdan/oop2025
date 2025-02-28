@@ -1,0 +1,2 @@
+Incorrect data entry.
+Please enter numbers or letter(A..Z)
