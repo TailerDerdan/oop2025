@@ -13,8 +13,7 @@ TEST_CASE("Multiply elements of empty vector given empty vector")
 TEST_CASE("Multiplay all elements of vector on min element")
 {
 	std::vector<double> vector = { -6, 5, 3.345, 7, 6, 2 };
-	std::vector<double> correctVector = { -42, -36, -30, -20.07, -12, 36 };
+	std::vector<double> correctVector = { 36, -30, -20.07, -42, -36, -12 };
 	MultiplyByMinElement(vector);
-	SortVector(vector);
 	REQUIRE(vector == correctVector);
 }

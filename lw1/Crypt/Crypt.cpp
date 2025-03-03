@@ -2,7 +2,9 @@
 #include <optional>
 #include <fstream>
 #include <string>
+#include <map>
 
+//переделать структуру под значения, которые мы используем
 struct Args
 {
 	std::string idCrypt;
@@ -11,9 +13,11 @@ struct Args
 	std::string key;
 };
 
+//поправить тест с exe файлом
 namespace
 {
 	const int RADIX_10 = 10;
+	const int MAX_KEY = 255;
 
 	std::optional<int> LetterToNumber(char ch)
 	{
@@ -30,6 +34,7 @@ namespace
 		return std::nullopt;
 	}
 
+	//заменить на stoi
 	std::optional<int> StringToInt(const std::string& str)
 	{
 		int i = 0;
@@ -52,82 +57,79 @@ namespace
 		}
 		return result;
 	}
-
-	uint32_t GetBit(int& x, int p)
+	// разобраться с передачей по ссылке
+	uint32_t GetBit(int& num, int numberOfBit)
 	{
-		return (x >> p) & ~(~0 << 1);
+		return (num >> numberOfBit) & ~(~0 << 1);
 	}
-
-	uint32_t MoveBit(uint32_t& x, int n)
+	//разобраться с передачей по ссылке
+	uint32_t MoveBit(uint32_t& num, int numberOfBit)
 	{
-		return (x << n);
+		return (num << numberOfBit);
 	}
-
-	int MixBit(int x)
+	//переименовать в mixbits
+	int MixBit(int num)
 	{
-		uint32_t temp = GetBit(x, 7);
+		std::map<int, int> newPlaceOfBit = {
+			{ 7, 5 },
+			{ 6, 1 },
+			{ 5, 0 },
+			{ 4, 7 },
+			{ 3, 6 },
+			{ 2, 4 },
+			{ 1, 3 },
+			{ 0, 2 },
+		};
+
 		uint32_t result = 0;
-		result = result | MoveBit(temp, 5);
-		temp = GetBit(x, 6);
-		result = result | MoveBit(temp, 1);
-		temp = GetBit(x, 5);
-		result = result | MoveBit(temp, 0);
-		temp = GetBit(x, 4);
-		result = result | MoveBit(temp, 7);
-		temp = GetBit(x, 3);
-		result = result | MoveBit(temp, 6);
-		temp = GetBit(x, 2);
-		result = result | MoveBit(temp, 4);
-		temp = GetBit(x, 1);
-		result = result | MoveBit(temp, 3);
-		temp = GetBit(x, 0);
-		result = result | MoveBit(temp, 2);
+		for (int iter = 0; iter < 8; iter++)
+		{
+			uint32_t temp = GetBit(num, newPlaceOfBit.find(iter)->first);
+			result = result | MoveBit(temp, newPlaceOfBit.find(iter)->second);
+		}
 		return result;
 	}
-
+	//переименовать в encrypt
 	void Encryption(std::ifstream& input, std::ofstream& output, int key)
 	{
 		char ch;
-		int chNum = 0;
+		//убрать chNum
 		while (input.get(ch))
 		{
-			chNum = int(ch);
-			int result = chNum ^ key;
+			int result = ch ^ key;
 			result = MixBit(result);
 			output.put(char(result));
 		}
 	}
 
-	int ReverseMixBit(int x)
+	int ReverseMixBit(int num)
 	{
-		uint32_t temp = GetBit(x, 7);
+		std::map<int, int> newPlaceOfBit = {
+			{ 7, 4 },
+			{ 6, 3 },
+			{ 5, 7 },
+			{ 4, 2 },
+			{ 3, 1 },
+			{ 2, 0 },
+			{ 1, 6 },
+			{ 0, 5 },
+		};
+
 		uint32_t result = 0;
-		result = result | MoveBit(temp, 4);
-		temp = GetBit(x, 6);
-		result = result | MoveBit(temp, 3);
-		temp = GetBit(x, 5);
-		result = result | MoveBit(temp, 7);
-		temp = GetBit(x, 4);
-		result = result | MoveBit(temp, 2);
-		temp = GetBit(x, 3);
-		result = result | MoveBit(temp, 1);
-		temp = GetBit(x, 2);
-		result = result | MoveBit(temp, 0);
-		temp = GetBit(x, 1);
-		result = result | MoveBit(temp, 6);
-		temp = GetBit(x, 0);
-		result = result | MoveBit(temp, 5);
+		for (int iter = 0; iter < 8; iter++)
+		{
+			uint32_t temp = GetBit(num, newPlaceOfBit.find(iter)->first);
+			result = result | MoveBit(temp, newPlaceOfBit.find(iter)->second);
+		}
 		return result;
 	}
-
-	void DeEncryption(std::ifstream& input, std::ofstream& output, int key)
+	// переименовать в deencrypt
+	void Deencryption(std::ifstream& input, std::ofstream& output, int key)
 	{
 		char ch;
-		int chNum = 0;
 		while (input.get(ch))
 		{
-			chNum = int(ch);
-			int result = ReverseMixBit(chNum);
+			int result = ReverseMixBit(ch);
 			result = result ^ key;
 			output.put(char(result));
 		}
@@ -173,7 +175,7 @@ namespace
 		}
 
 		auto keyInt = StringToInt(args.key);
-		if (!keyInt || keyInt.value() > 255)
+		if (!keyInt || keyInt.value() > MAX_KEY)
 		{
 			PrintError();
 			return false;
@@ -185,7 +187,7 @@ namespace
 		}
 		else if (args.idCrypt == "decrypt")
 		{
-			DeEncryption(inputFile, outputFile, keyInt.value());
+			Deencryption(inputFile, outputFile, keyInt.value());
 		}
 		else
 		{

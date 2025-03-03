@@ -24,6 +24,7 @@
     <ProjectGuid>{834bf05b-b389-4924-8166-731e30815c73}</ProjectGuid>
     <RootNamespace>Vectortask2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Vector-2</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

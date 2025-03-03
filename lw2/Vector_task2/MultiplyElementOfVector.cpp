@@ -15,16 +15,16 @@ void SortVector(std::vector<double>& numbers)
 }
 
 
-void WriteSortedVector(std::vector<double> numbers)
+void WriteSortedVector(std::vector<double> numbers, std::ostream& output)
 {
 	SortVector(numbers);
 	if (!numbers.empty())
 	{
-		copy(numbers.begin(), numbers.end() - 1, std::ostream_iterator<double>(std::cout, ", "));
-		std::cout << *(numbers.end() - 1);
+		copy(numbers.begin(), numbers.end() - 1, std::ostream_iterator<double>(output, ", "));
+		output << *(numbers.end() - 1);
 	}
 	else
 	{
-		copy(numbers.begin(), numbers.end(), std::ostream_iterator<double>(std::cout, ", "));
+		copy(numbers.begin(), numbers.end(), std::ostream_iterator<double>(output, ", "));
 	}
 }

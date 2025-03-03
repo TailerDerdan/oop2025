@@ -5,16 +5,18 @@
 #include <array>
 #include <iomanip>
 #include <sstream>
+#include <limits>
 
 namespace 
 {
 	const int COUNT_LINE = 3;
 	const int COUNT_COL = 3;
 
-	using Mat3x3 = std::array<std::array<double, COUNT_COL>, COUNT_LINE>;
-	using Mat2x2 = std::array<std::array<double, COUNT_COL - 1>, COUNT_COL - 1>;
+	using Matrix3x3 = std::array<std::array<double, COUNT_COL>, COUNT_LINE>;
+	using Matrix2x2 = std::array<std::array<double, COUNT_COL - 1>, COUNT_COL - 1>;
 
 	const char SPACE = ' ';
+	const char TAB = '\t';
 
 	struct Args
 	{
@@ -22,15 +24,9 @@ namespace
 		bool isFile = false;
 	};
 
-	struct Coord
+	std::optional<Matrix3x3> ReadMatrix(std::istream& input)
 	{
-		int line = 0;
-		int col = 0;
-	};
-
-	std::optional<Mat3x3> ReadMatrix(std::istream& input)
-	{
-		Mat3x3 matrix{ 0 };
+		Matrix3x3 matrix{ 0 };
 		
 		int line = 0;
 		std::string lineStr;
@@ -72,7 +68,7 @@ namespace
 		return matrix;
 	}
 
-	std::optional<Mat3x3> ReadMatrixFromFile(const std::string& fileName)
+	std::optional<Matrix3x3> ReadMatrixFromFile(const std::string& fileName)
 	{
 		std::ifstream matrixInputFile;
 		matrixInputFile.open(fileName);
@@ -85,12 +81,12 @@ namespace
 		return ReadMatrix(matrixInputFile);
 	}
 
-	double GetDeterminant(const Mat2x2& matrix)
+	double GetDeterminant(const Matrix2x2& matrix)
 	{
 		return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]);
 	}
 
-	double GetDeterminant(const Mat3x3& matrix)
+	double GetDeterminant(const Matrix3x3& matrix)
 	{
 		return (matrix[0][0] * matrix[1][1] * matrix[2][2] +
 			matrix[1][0] * matrix[0][2] * matrix[2][1] +
@@ -101,9 +97,10 @@ namespace
 			matrix[2][2] * matrix[0][1] * matrix[1][0]);
 	}
 
-	double GetMinor(const Coord& coord, const Mat3x3& matrix3x3)
+	// избавиться от структуры coord на col и line
+	double GetMinor(int line, int col, const Matrix3x3& matrix3x3)
 	{
-		Mat2x2 matrix2x2{ 0 };
+		Matrix2x2 matrix2x2{ 0 };
 
 		int line2x2 = 0;
 		int col2x2 = 0;
@@ -112,8 +109,8 @@ namespace
 			col2x2 = 0;
 			for (int col = 0; col < COUNT_COL; col++)
 			{
-				if (col == coord.col) continue;
-				if (line == coord.line) continue;
+				if (col == col) continue;
+				if (line == line) continue;
 
 				matrix2x2[line2x2][col2x2] = matrix3x3[line][col];
 				col2x2++;
@@ -127,13 +124,34 @@ namespace
 		return GetDeterminant(matrix2x2);
 	}
 
-	std::optional<Mat3x3> Invert(const Mat3x3& matrix)
+	void TurnToNegativeMinor(int line, int col, double& minor)
 	{
-		Mat3x3 result{ 0 };
+		if ((line + col) % 2 != 0 && minor != 0)
+		{
+			minor *= -1;
+		}
+	}
+
+	void DivideOnDet(double& minor, double det)
+	{
+		minor /= det;
+	}
+
+	void TransposeMinor(Matrix3x3& result, int line, int col, double minor)
+	{
+		result[col][line] = minor;
+	}
+
+	//использовать exception вместо optional
+	//разбить invert на несколько функций
+	std::optional<Matrix3x3> Invert(const Matrix3x3& matrix)
+	{
+		Matrix3x3 result{ 0 };
 
 		double det = GetDeterminant(matrix);
 
-		if (det == 0.0)
+		// сравнивать не с 0, а с эпселент
+		if (det == std::numeric_limits<double>::epsilon())
 		{
 			std::cout << "Non-invertible" << std::endl;
 			return std::nullopt;
@@ -143,34 +161,30 @@ namespace
 		{
 			for (int col = 0; col < COUNT_COL; col++)
 			{
-				Coord coord = { line, col };
-				double minor = GetMinor(coord, matrix);
-				if ((line + col) % 2 != 0 && minor != 0)
-				{
-					minor *= -1;
-				}
-				minor /= det;
-				result[col][line] = minor;
+				double minor = GetMinor(line, col, matrix);
+				TurnToNegativeMinor(line, col, minor);
+				DivideOnDet(minor, det);
+				TransposeMinor(result, line, col, minor);
 			}
 		}
 
 		return result;
 	}
-
-	void MatrixOutput(const Mat3x3& m1)
+	//переименовать на PrintMatrix
+	void PrintMatrix(const Matrix3x3& matrix)
 	{
 		std::cout << std::setprecision(3) << std::fixed;
-		for (int i = 0; i < COUNT_LINE; ++i)
+		for (int line = 0; line < COUNT_LINE; line++)
 		{
-			for (int j = 0; j < COUNT_COL; ++j)
+			for (int col = 0; col < COUNT_COL; col++)
 			{
-				std::cout << m1[i][j];
-				if (j != COUNT_COL - 1)
+				std::cout << matrix[line][col];
+				if (col != COUNT_COL - 1)
 				{
-					std::cout << '\t';
+					std::cout << TAB;
 				}
 			}
-			if (i != COUNT_LINE - 1)
+			if (line != COUNT_LINE - 1)
 			{
 				std::cout << std::endl;
 			}
@@ -205,7 +219,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	std::optional<Mat3x3> matrixInput;
+	std::optional<Matrix3x3> matrixInput;
 	if (!args.value().isFile)
 	{
 		matrixInput = ReadMatrix(std::cin);
@@ -227,7 +241,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	MatrixOutput(invertMatrix.value());
+	PrintMatrix(invertMatrix.value());
 
 	return EXIT_SUCCESS;
 }

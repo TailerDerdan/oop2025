@@ -35,9 +35,9 @@ echo Test 6 passed
 fc test_data\invert_good_matrix_3x3.txt "%TEMP%\output.txt" > nul || goto err
 echo Test 7 passed
 
-REM %MyProgram% test_data\invert_good_matrix_3x3.txt > "%TEMP%\output.txt" || goto err
-REM fc test_data\good_matrix_3x3.txt "%TEMP%\output.txt" > nul || goto err
-REM echo Test 8 passed
+%MyProgram% test_data\invert_good_matrix_3x3.txt > "%TEMP%\output.txt" || goto err
+fc test_data\good_matrix2_3x3.txt "%TEMP%\output.txt" > nul || goto err
+echo Test 8 passed
 
 echo All tests passed successfully
 exit /B 0

@@ -30,14 +30,14 @@ namespace
 		int y = 0;
 	};
 
+	//разбить на несколько структур
 	struct StructField
 	{
 		std::ifstream inputFile;
 		std::ofstream outputFile;
 		std::vector<Coord> coordsStart;
 		FieldArray field = { ' ' };
-		int xMax = 0;
-		int yMax = 0;
+		Coord coordMax;
 	};
 
 	bool ReadField(const std::string& inputPath, std::ifstream& inputFile)
@@ -66,7 +66,7 @@ namespace
 			if (ch == '\n')
 			{
 				coord.y++;
-				field.xMax = std::max(field.xMax, coord.x - 1);
+				field.coordMax.x = std::max(field.coordMax.x, coord.x - 1);
 				coord.x = 0;
 			}
 			else if (coord.x < MAX_WIDTH)
@@ -79,7 +79,7 @@ namespace
 				coord.x++;
 			}
 		}
-		field.yMax = coord.y;
+		field.coordMax.y = coord.y;
 		return true;
 	}
 
@@ -92,13 +92,14 @@ namespace
 		{
 			result.push_back(coord);
 			field.field[coord.y][coord.x] = FILLED_CELL;
-			field.yMax = std::max(coord.y, field.yMax);
-			field.xMax = std::max(coord.x, field.xMax);
+			field.coordMax.y = std::max(coord.y, field.coordMax.y);
+			field.coordMax.x = std::max(coord.x, field.coordMax.x);
 		}
 	}
 
 	std::vector<Coord> GetCoordFilledCell(StructField& field, std::vector<Coord>& coordStartCell)
 	{
+		//заменить на очередь
 		std::vector<Coord> result;
 		while (!coordStartCell.empty())
 		{
@@ -106,11 +107,8 @@ namespace
 			currentCell = coordStartCell.at(coordStartCell.size() - 1);
 			coordStartCell.pop_back();
 
-			if (currentCell.x == 18 && currentCell.y == 2)
-			{
-				std::cout << " " << std::endl;
-			}
-
+			//выделить в отдельную функцию
+			//объединить нижнее и верхнее условие
 			if ((currentCell.x <= MAX_WIDTH) && (currentCell.x >= MIN_WIDTH) &&
 				(currentCell.y <= MAX_WIDTH) && (currentCell.y >= MIN_WIDTH))
 			{
@@ -156,7 +154,7 @@ namespace
 		}
 	}
 
-	bool Rendering(StructField& field, const std::string& output)
+	bool Render(StructField& field, const std::string& output)
 	{
 		field.outputFile.open(output);
 		if (!field.outputFile.is_open())
@@ -164,14 +162,14 @@ namespace
 			std::cout << "Failed to open '" << output << "' for writing\n";
 			return false;
 		}
-		for (int iterY = 0; iterY <= field.yMax; iterY++)
+		for (int iterY = 0; iterY <= field.coordMax.y; iterY++)
 		{
-			for (int iterX = 0; iterX <= field.xMax; iterX++)
+			for (int iterX = 0; iterX <= field.coordMax.x; iterX++)
 			{
 				char cell = field.field[iterY][iterX];
 				field.outputFile.put(cell);
 			}
-			if (iterY != field.yMax)
+			if (iterY != field.coordMax.y)
 			{
 				field.outputFile.put('\n');
 			}
@@ -210,7 +208,7 @@ int main(int argc, char* argv[])
 
 	Fill(field);
 
-	if (!Rendering(field, args->outputFile))
+	if (!Render(field, args->outputFile))
 	{
 		return EXIT_FAILURE;
 	}
