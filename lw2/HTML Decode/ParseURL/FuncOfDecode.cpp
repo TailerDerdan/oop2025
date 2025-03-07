@@ -1,19 +1,23 @@
-#include "modules.h"
+#include "HTMLDecode.h"
 
-std::string DecodeSpecialChar(std::string& temp)
+#include <algorithm>
+#include <map>
+#include <iterator>
+
+std::string DecodeSpecialStr(std::string& htmlEntity)
 {
 	std::map<std::string, std::string> specialChar{ { "&quot;", "\"" }, { "&apos;", "'" },
 		{ "&gt;", ">" }, { "&lt;", "<" }, { "&amp;", "&" } };
 
 	for (auto iter : specialChar)
 	{
-		if (temp == iter.first)
+		if (htmlEntity == iter.first)
 		{
 			return iter.second;
 		}
 	}
 
-	return temp;
+	return htmlEntity;
 }
 
 std::string DecodeHtml(const std::string& html)
@@ -43,7 +47,7 @@ std::string DecodeHtml(const std::string& html)
 
 		if (!potentialHTMLEntity.empty())
 		{
-			std::string specialChar = DecodeSpecialChar(potentialHTMLEntity);
+			std::string specialChar = DecodeSpecialStr(potentialHTMLEntity);
 			result.append(html, previousStartPos, startPosSpecialChar - previousStartPos).append(specialChar);
 			startPosSpecialChar += potentialHTMLEntity.size();
 		}
@@ -53,14 +57,4 @@ std::string DecodeHtml(const std::string& html)
 		}
 	}
 	return result;
-}
-
-void ReadText(std::string& text, std::istream& input)
-{
-	std::string line;
-	while (!std::cin.eof())
-	{
-		std::getline(input, line);
-		text.append(line);
-	}
 }

@@ -1,6 +1,36 @@
 ﻿#define CATCH_CONFIG_MAIN
-#include "../../catch2/catch.hpp"
-#include "../ParseURL/modules.h"
+#include "../../../catch2/catch.hpp"
+#include "../ParseURL/HTMLDecode.h"
+
+TEST_CASE("Verifying the identification of an html entity")
+{
+	std::map<std::string, std::string> specialStrs{ { "&quot;", "\"" }, { "&apos;", "'" },
+		{ "&gt;", ">" }, { "&lt;", "<" }, { "&amp;", "&" } };
+
+	std::string htmlEntity = "&quot;";
+	std::string neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == specialStrs.at(htmlEntity));
+
+	htmlEntity = "&apos;";
+	neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == specialStrs.at(htmlEntity));
+
+	htmlEntity = "&gt;";
+	neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == specialStrs.at(htmlEntity));
+
+	htmlEntity = "&lt;";
+	neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == specialStrs.at(htmlEntity));
+
+	htmlEntity = "&amp;";
+	neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == specialStrs.at(htmlEntity));
+
+	htmlEntity = "&qwer;";
+	neededChar = DecodeSpecialStr(htmlEntity);
+	REQUIRE(neededChar == "&qwer;");
+}
 
 TEST_CASE("Empty string give empty string")
 {

@@ -130,10 +130,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FuncOfDecode.cpp" />
-    <ClCompile Include="ParseURL.cpp" />
+    <ClCompile Include="Html_Decode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules.h" />
+    <ClInclude Include="HTMLDecode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

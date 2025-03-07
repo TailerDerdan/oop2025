@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Tests.cpp">
+    <ClCompile Include="Html_Decode.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="..\Vector_task2\MultiplyElementOfVector.cpp">
+    <ClCompile Include="FuncOfDecode.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Vector_task2\modules.h">
+    <ClInclude Include="HTMLDecode.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

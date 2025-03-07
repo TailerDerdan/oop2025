@@ -1,4 +1,8 @@
-#include "modules.h"
+#include "HandleVector.h"
+
+#include <iterator>
+#include <algorithm>
+#include <iomanip>
 
 void MultiplyByMinElement(std::vector<double>& numbers)
 {
@@ -14,10 +18,10 @@ void SortVector(std::vector<double>& numbers)
 	std::sort(numbers.begin(), numbers.end());
 }
 
-
-void WriteSortedVector(std::vector<double> numbers, std::ostream& output)
+void PrintSortedVector(std::vector<double> numbers, std::ostream& output)
 {
 	SortVector(numbers);
+	output << std::setprecision(3) << std::fixed;
 	if (!numbers.empty())
 	{
 		copy(numbers.begin(), numbers.end() - 1, std::ostream_iterator<double>(output, ", "));

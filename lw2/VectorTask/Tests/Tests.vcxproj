@@ -21,10 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{834bf05b-b389-4924-8166-731e30815c73}</ProjectGuid>
-    <RootNamespace>Vectortask2</RootNamespace>
+    <ProjectGuid>{8715dc7e-74d6-4e00-8979-132d2c71b3ca}</ProjectGuid>
+    <RootNamespace>Tests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Vector-2</ProjectName>
+    <ProjectName>Vector2-tests</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -128,11 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MultiplyElementOfVector.cpp" />
-    <ClCompile Include="Vector_task2.cpp" />
+    <ClCompile Include="..\Vector_task2\MultiplyElementOfVector.cpp" />
+    <ClCompile Include="Tests.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules.h" />
+    <ClInclude Include="..\Vector_task2\HandleVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

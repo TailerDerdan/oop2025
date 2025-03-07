@@ -1,7 +1,6 @@
-﻿#include <iostream>
-#define CATCH_CONFIG_MAIN
-#include "../../catch2/catch.hpp"
-#include "../Vector_task2/modules.h"
+﻿#define CATCH_CONFIG_MAIN
+#include "../../../catch2/catch.hpp"
+#include "../Vector_task2/HandleVector.h"
 
 TEST_CASE("Multiply elements of empty vector given empty vector")
 {

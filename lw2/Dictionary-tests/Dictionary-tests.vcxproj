@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{55e66d57-4381-4d2c-9214-3d350c9be8c4}</ProjectGuid>
-    <RootNamespace>HTMLDecodetests</RootNamespace>
+    <ProjectGuid>{461982c2-5f2a-4ad9-b217-b2107b3d3aac}</ProjectGuid>
+    <RootNamespace>Dictionarytests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,11 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\ParseURL\FuncOfDecode.cpp" />
-    <ClCompile Include="HTML_Decode-tests.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\ParseURL\modules.h" />
+    <ClCompile Include="Dictionary-tests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

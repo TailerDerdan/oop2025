@@ -23,7 +23,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\ParseURL\modules.h">
+    <ClInclude Include="..\ParseURL\HTMLDecode.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
