@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{cc01947b-40c6-4083-998d-fc59248fcbab}</ProjectGuid>
-    <RootNamespace>Dictionary</RootNamespace>
+    <ProjectGuid>{3d85569d-5b72-4358-a02d-1a44f2683c52}</ProjectGuid>
+    <RootNamespace>PrimeNumbers</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,16 +129,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Dictionary.cpp" />
-    <ClCompile Include="Logic.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="PrimeNumbers.cpp" />
+    <ClCompile Include="TheSieveOfErotosfen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UI.h" />
-    <ClInclude Include="Logic.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="dictionary.txt" />
+    <ClInclude Include="PrimeNumberFunc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

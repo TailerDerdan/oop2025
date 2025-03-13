@@ -31,13 +31,17 @@ namespace
 	};
 
 	//разбить на несколько структур
-	struct StructField
+	struct Field
 	{
-		std::ifstream inputFile;
-		std::ofstream outputFile;
 		std::vector<Coord> coordsStart;
 		FieldArray field = { ' ' };
 		Coord coordMax;
+	};
+
+	struct FilesIO
+	{
+		std::ifstream inputFile;
+		std::ofstream outputFile;
 	};
 
 	bool ReadField(const std::string& inputPath, std::ifstream& inputFile)
@@ -51,9 +55,9 @@ namespace
 		return true;
 	}
 
-	bool ReadField(StructField& field, const std::string& inputPath)
+	bool ReadField(Field& field, FilesIO& files, const std::string& inputPath)
 	{
-		if (!ReadField(inputPath, field.inputFile))
+		if (!ReadField(inputPath, files.inputFile))
 		{
 			return false;
 		}
@@ -61,7 +65,7 @@ namespace
 		char ch;
 		Coord coord;
 
-		while (field.inputFile.get(ch))
+		while (files.inputFile.get(ch))
 		{
 			if (ch == '\n')
 			{
@@ -83,7 +87,7 @@ namespace
 		return true;
 	}
 
-	void FillCell(StructField& field, Coord& coord, std::vector<Coord>& result)
+	void FillCell(Field& field, Coord& coord, std::vector<Coord>& result)
 	{
 		if (coord.x < MIN_WIDTH || coord.y < MIN_WIDTH) return;
 		if (coord.x > MAX_WIDTH - 1 || coord.y > MAX_WIDTH - 1) return;
@@ -97,7 +101,34 @@ namespace
 		}
 	}
 
-	std::vector<Coord> GetCoordFilledCell(StructField& field, std::vector<Coord>& coordStartCell)
+	void FillInSides(Coord currentCell, Field& field, std::vector<Coord>& result)
+	{
+		Coord topCoord;
+		topCoord.x = currentCell.x;
+		topCoord.y = currentCell.y - 1;
+
+		FillCell(field, topCoord, result);
+
+		Coord bottomCoord;
+		bottomCoord.x = currentCell.x;
+		bottomCoord.y = currentCell.y + 1;
+
+		FillCell(field, bottomCoord, result);
+
+		Coord leftCoord;
+		leftCoord.x = currentCell.x - 1;
+		leftCoord.y = currentCell.y;
+
+		FillCell(field, leftCoord, result);
+
+		Coord rightCoord;
+		rightCoord.x = currentCell.x + 1;
+		rightCoord.y = currentCell.y;
+
+		FillCell(field, rightCoord, result);
+	}
+
+	std::vector<Coord> GetCoordFilledCell(Field& field, std::vector<Coord>& coordStartCell)
 	{
 		//заменить на очередь
 		std::vector<Coord> result;
@@ -112,38 +143,13 @@ namespace
 			if ((currentCell.x <= MAX_WIDTH) && (currentCell.x >= MIN_WIDTH) &&
 				(currentCell.y <= MAX_WIDTH) && (currentCell.y >= MIN_WIDTH))
 			{
-				Coord topCoord;
-				topCoord.x = currentCell.x;
-				topCoord.y = currentCell.y - 1;
-
-				FillCell(field, topCoord, result);
-
-				Coord bottomCoord;
-				bottomCoord.x = currentCell.x;
-				bottomCoord.y = currentCell.y + 1;
-
-				FillCell(field, bottomCoord, result);
-			}
-			if ((currentCell.x <= MAX_WIDTH) && (currentCell.x >= MIN_WIDTH) &&
-				(currentCell.y <= MAX_WIDTH) && (currentCell.y >= MIN_WIDTH))
-			{
-				Coord leftCoord;
-				leftCoord.x = currentCell.x - 1;
-				leftCoord.y = currentCell.y;
-
-				FillCell(field, leftCoord, result);
-
-				Coord rightCoord;
-				rightCoord.x = currentCell.x + 1;
-				rightCoord.y = currentCell.y;
-
-				FillCell(field, rightCoord, result);
+				FillInSides(currentCell, field, result);
 			}
 		}
 		return result;
 	}
 
-	void Fill(StructField& field)
+	void Fill(Field& field)
 	{
 		std::vector<Coord> nextGenerationCell;
 
@@ -154,10 +160,10 @@ namespace
 		}
 	}
 
-	bool Render(StructField& field, const std::string& output)
+	bool Render(Field& field, FilesIO& files, const std::string& output)
 	{
-		field.outputFile.open(output);
-		if (!field.outputFile.is_open())
+		files.outputFile.open(output);
+		if (!files.outputFile.is_open())
 		{
 			std::cout << "Failed to open '" << output << "' for writing\n";
 			return false;
@@ -167,11 +173,11 @@ namespace
 			for (int iterX = 0; iterX <= field.coordMax.x; iterX++)
 			{
 				char cell = field.field[iterY][iterX];
-				field.outputFile.put(cell);
+				files.outputFile.put(cell);
 			}
 			if (iterY != field.coordMax.y)
 			{
-				field.outputFile.put('\n');
+				files.outputFile.put('\n');
 			}
 		}
 		return true;
@@ -200,15 +206,16 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	StructField field;
-	if (!ReadField(field, args->inputFile))
+	Field field;
+	FilesIO files;
+	if (!ReadField(field, files, args->inputFile))
 	{
 		return EXIT_FAILURE;
 	}
 
 	Fill(field);
 
-	if (!Render(field, args->outputFile))
+	if (!Render(field, files, args->outputFile))
 	{
 		return EXIT_FAILURE;
 	}

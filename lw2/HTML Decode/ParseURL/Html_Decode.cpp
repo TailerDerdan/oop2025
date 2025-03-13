@@ -1,4 +1,5 @@
 ﻿#include "HTMLDecode.h"
+#include <iostream>
 
 void ReadText(std::string& text, std::istream& input)
 {

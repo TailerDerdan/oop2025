@@ -1,8 +1,7 @@
 #pragma once
 
-#include <fstream>
-#include <iostream>
 #include <string>
 
-std::string DecodeSpecialStr(std::string& htmlEntity);
+//убрать лишние include
+//оставить только те функции, которыми пользуется клиент
 std::string DecodeHtml(const std::string& html);

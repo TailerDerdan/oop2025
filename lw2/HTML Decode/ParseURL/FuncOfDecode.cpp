@@ -1,23 +1,24 @@
 #include "HTMLDecode.h"
 
-#include <algorithm>
+//убрать ненужные include
 #include <map>
-#include <iterator>
 
-std::string DecodeSpecialStr(std::string& htmlEntity)
+std::string DecodeSpecialStr(const std::string& potentiolHtmlEntity)
 {
-	std::map<std::string, std::string> specialChar{ { "&quot;", "\"" }, { "&apos;", "'" },
+	//использовать static
+	static std::map<std::string, std::string> specialChar{ { "&quot;", "\"" }, { "&apos;", "'" },
 		{ "&gt;", ">" }, { "&lt;", "<" }, { "&amp;", "&" } };
 
-	for (auto iter : specialChar)
+	//переписать обход цикла на [key, value]
+	for (const auto& [htmlEntity, specialChar] : specialChar)
 	{
-		if (htmlEntity == iter.first)
+		if (potentiolHtmlEntity == htmlEntity)
 		{
-			return iter.second;
+			return specialChar;
 		}
 	}
 
-	return htmlEntity;
+	return potentiolHtmlEntity;
 }
 
 std::string DecodeHtml(const std::string& html)
@@ -33,6 +34,7 @@ std::string DecodeHtml(const std::string& html)
 	size_t startPosSpecialChar = 0;
 	size_t endPosSpecialChar = 0;
 
+	//оптимизировать работу нахождение сущностей в строке
 	while (startPosSpecialChar <= html.length() && endPosSpecialChar <= html.length())
 	{
 		previousStartPos = startPosSpecialChar;

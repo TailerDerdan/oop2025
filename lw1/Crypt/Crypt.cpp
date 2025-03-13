@@ -3,13 +3,18 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <stdexcept>
 
 //переделать структуру под значения, которые мы используем
-struct Args
+struct FilePaths
 {
-	std::string idCrypt;
 	std::string input;
 	std::string output;
+};
+
+struct PropertiesCrypting
+{
+	std::string idCrypt;
 	std::string key;
 };
 
@@ -35,40 +40,18 @@ namespace
 	}
 
 	//заменить на stoi
-	std::optional<int> StringToInt(const std::string& str)
-	{
-		int i = 0;
-		int result = 0;
-		std::optional<int> charNumber = 0;
-
-		while (i <= str.length() - 1)
-		{
-			charNumber = LetterToNumber(str[i]);
-			if ((!charNumber) || (charNumber.value() > RADIX_10))
-			{
-				return std::nullopt;
-			}
-			if (result > ((INT32_MAX - charNumber.value()) / RADIX_10))
-			{
-				return std::nullopt;
-			}
-			result = result * RADIX_10 + charNumber.value();
-			i++;
-		}
-		return result;
-	}
 	// разобраться с передачей по ссылке
-	uint32_t GetBit(int& num, int numberOfBit)
+	uint32_t GetBit(int num, int numberOfBit)
 	{
 		return (num >> numberOfBit) & ~(~0 << 1);
 	}
 	//разобраться с передачей по ссылке
-	uint32_t MoveBit(uint32_t& num, int numberOfBit)
+	uint32_t MoveBit(uint32_t num, int numberOfBit)
 	{
 		return (num << numberOfBit);
 	}
 	//переименовать в mixbits
-	int MixBit(int num)
+	int MixBits(int num)
 	{
 		std::map<int, int> newPlaceOfBit = {
 			{ 7, 5 },
@@ -90,14 +73,14 @@ namespace
 		return result;
 	}
 	//переименовать в encrypt
-	void Encryption(std::ifstream& input, std::ofstream& output, int key)
+	void Encrypt(std::ifstream& input, std::ofstream& output, int key)
 	{
 		char ch;
 		//убрать chNum
 		while (input.get(ch))
 		{
 			int result = ch ^ key;
-			result = MixBit(result);
+			result = MixBits(result);
 			output.put(char(result));
 		}
 	}
@@ -124,7 +107,7 @@ namespace
 		return result;
 	}
 	// переименовать в deencrypt
-	void Deencryption(std::ifstream& input, std::ofstream& output, int key)
+	void Deencrypt(std::ifstream& input, std::ofstream& output, int key)
 	{
 		char ch;
 		while (input.get(ch))
@@ -135,20 +118,16 @@ namespace
 		}
 	}
 
-	std::optional<Args> ParseArgs(int argc, char* argv[])
+	void ParseArgs(int argc, char* argv[], FilePaths& paths, PropertiesCrypting& properties)
 	{
 		if (argc != 5)
 		{
-			std::cout << "Invalid argument count" << std::endl
-				<< "Usage: crypt.exe <inputFile> <outputFile> <crypt> <key>" << std::endl;
-			return std::nullopt;
+			throw std::invalid_argument("Invalid argument count\nUsage: crypt.exe <inputFile> <outputFile> <crypt> <key>");
 		}
-		Args args;
-		args.input = argv[1];
-		args.output = argv[2];
-		args.idCrypt = argv[3];
-		args.key = argv[4];
-		return args;
+		paths.input = argv[1];
+		paths.output = argv[2];
+		properties.idCrypt = argv[3];
+		properties.key = argv[4];
 	}
 
 	void PrintError()
@@ -157,37 +136,46 @@ namespace
 		std::cout << "Please enter numbers or letter(A..Z)\n";
 	}
 
-	bool CryptOrDecryptFile(const Args& args)
+	bool CryptOrDecryptFile(const FilePaths& paths, const PropertiesCrypting& properties)
 	{
-		std::ifstream inputFile(args.input, std::ios::binary);
-		std::ofstream outputFile(args.output, std::ios::binary);
+		std::ifstream inputFile(paths.input, std::ios::binary);
+		std::ofstream outputFile(paths.output, std::ios::binary);
 
 		if (!inputFile.is_open())
 		{
-			std::cout << "Failed to open '" << args.input << "' for reading\n";
+			std::cout << "Failed to open '" << paths.input << "' for reading\n";
 			return false;
 		}
 
 		if (!outputFile.is_open())
 		{
-			std::cout << "Failed to open '" << args.output << "' for writing\n";
+			std::cout << "Failed to open '" << paths.output << "' for writing\n";
 			return false;
 		}
-
-		auto keyInt = StringToInt(args.key);
-		if (!keyInt || keyInt.value() > MAX_KEY)
+		int keyInt = 0;
+		try
+		{
+			keyInt = std::stoi(properties.key);
+		}
+		catch (const std::exception& exp)
+		{
+			std::cout << exp.what() << std::endl;
+			return false;
+		}
+		
+		if (keyInt > MAX_KEY)
 		{
 			PrintError();
 			return false;
 		}
 
-		if (args.idCrypt == "crypt")
+		if (properties.idCrypt == "crypt")
 		{
-			Encryption(inputFile, outputFile, keyInt.value());
+			Encrypt(inputFile, outputFile, keyInt);
 		}
-		else if (args.idCrypt == "decrypt")
+		else if (properties.idCrypt == "decrypt")
 		{
-			Deencryption(inputFile, outputFile, keyInt.value());
+			Deencrypt(inputFile, outputFile, keyInt);
 		}
 		else
 		{
@@ -200,13 +188,19 @@ namespace
 
 int main(int argc, char* argv[])
 {
-	auto args = ParseArgs(argc, argv);
-	if (!args)
+	FilePaths paths;
+	PropertiesCrypting properties;
+	try
 	{
+		ParseArgs(argc, argv, paths, properties);
+	}
+	catch (const std::exception& exp)
+	{
+		std::cout << exp.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 
-	if (!CryptOrDecryptFile(args.value()))
+	if (!CryptOrDecryptFile(paths, properties))
 	{
 		return EXIT_FAILURE;
 	}
