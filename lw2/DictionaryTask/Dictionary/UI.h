@@ -9,4 +9,4 @@ struct Args
 
 Dictionary ReadDictionaryFromFile(std::fstream& dictionaryFile);
 void WorkWithDictionary(Dictionary& dictionary, std::istream& input, std::ostream& output, bool& isDictionaryChanged);
-void PrintDicitionaryInFile(Dictionary& dictionary, std::fstream& dictionaryFile);
+void PrintDictionaryInFile(Dictionary& dictionary, std::fstream& dictionaryFile);

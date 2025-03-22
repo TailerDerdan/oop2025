@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <windows.h>
+#include <fstream>
 #include "UI.h"
 
 //скоректировать программу
@@ -13,7 +14,7 @@ void SaveChagesInFile(Dictionary& dictionary, std::istream& input, std::ostream&
 	if (ch == 'Y' || ch == 'y')
 	{
 		dictionaryFile.open(dictionaryFilePath);
-		PrintDicitionaryInFile(dictionary, dictionaryFile);
+		PrintDictionaryInFile(dictionary, dictionaryFile);
 		output << "Изменения сохранены. До свидания." << std::endl;
 	}
 	else
@@ -59,7 +60,7 @@ Args ParseArgs(int argc, char* argv[])
 {
 	if (argc != 2)
 	{
-		throw std::invalid_argument("Invalid argument count\nUsage: Dictionary.exe <dictionary.txt>");
+		throw std::invalid_argument("Invalid argument count\nUsage: dictionary.exe <dictionary.txt>");
 	}
 	Args args;
 	args.dictionaryFilePath = argv[1];

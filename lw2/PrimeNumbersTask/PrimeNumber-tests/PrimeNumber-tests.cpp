@@ -1,5 +1,5 @@
 ﻿#define CATCH_CONFIG_MAIN
-#include "../../catch2/catch.hpp"
+#include "../../../catch2/catch.hpp"
 #include "../PrimeNumbers/PrimeNumberFunc.h"
 
 TEST_CASE("Checking for finding prime numbers")
@@ -28,3 +28,14 @@ TEST_CASE("Uncorrect input dates")
 	auto primeNums = GeneratePrimeNumbersSet(-1);
 	CHECK(primeNums == std::nullopt);
 }
+
+TEST_CASE("Check upperBound around prime number")
+{
+	int primeNumber = 101;
+	int countPrimeNumbers = 26;
+	CHECK(GeneratePrimeNumbersSet(primeNumber).value().size() == countPrimeNumbers);
+	CHECK(GeneratePrimeNumbersSet(primeNumber - 1).value().size() == (countPrimeNumbers - 1));
+	CHECK(GeneratePrimeNumbersSet(primeNumber + 1).value().size() == countPrimeNumbers);
+}
+
+//добавить тест на окрестности вокруг простого числа

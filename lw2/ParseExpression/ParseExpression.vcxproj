@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a622f17d-8a9a-461d-b52e-14c8e66d6876}</ProjectGuid>
-    <RootNamespace>PrimeNumbertests</RootNamespace>
+    <ProjectGuid>{316809de-0527-4b8c-b147-996ad67fe779}</ProjectGuid>
+    <RootNamespace>ParseExpression</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,11 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\PrimeNumbers\TheSieveOfErotosfen.cpp" />
-    <ClCompile Include="PrimeNumber-tests.cpp" />
+    <ClCompile Include="ParseExpression.cpp" />
+    <ClCompile Include="Parsing.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\PrimeNumbers\PrimeNumberFunc.h" />
+    <ClInclude Include="ParseExpressionModule.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
