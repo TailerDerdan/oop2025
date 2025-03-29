@@ -113,7 +113,6 @@ void WorkWithDictionary(Dictionary& dictionary, std::istream& input, std::ostrea
 		{
 			break;
 		}
-		isDictionaryChanged = true;
 
 		auto translations = GetTranslations(word, dictionary);
 		if (!translations)
@@ -123,6 +122,7 @@ void WorkWithDictionary(Dictionary& dictionary, std::istream& input, std::ostrea
 			if (translation)
 			{
 				AddNewTranslation(dictionary, word, translation.value());
+				isDictionaryChanged = true;
 			}
 			continue;
 		}

@@ -5,7 +5,7 @@ GUIOfCar::GUIOfCar(std::istream& input, std::ostream& output)
 	: m_input(input)
 	, m_output(output)
 	, m_actionMap(
-		  { "SetGear", [] }){};
+		  { "SetGear", std::bind() }){};
 
 void GUIOfCar::OutputGear()
 {
@@ -75,6 +75,14 @@ void GUIOfCar::Info()
 	OutputDirection();
 }
 
+void GUIOfCar::SetGear()
+{
+	if (!m_car.SetGear(stoi(argument)))
+	{
+		m_output << "You can't change gear to " << argument << std::endl;
+	}
+}
+
 bool GUIOfCar::HandleCommandWithParams(const std::string& line)
 {
 	std::string command;
@@ -88,10 +96,7 @@ bool GUIOfCar::HandleCommandWithParams(const std::string& line)
 
 		if (command == "SetGear")
 		{
-			if (!m_car.SetGear(stoi(argument)))
-			{
-				m_output << "You can't change gear to " << argument << std::endl;
-			}
+			
 			return true;
 		}
 		if (command == "SetSpeed")

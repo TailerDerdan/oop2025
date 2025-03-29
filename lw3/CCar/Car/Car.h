@@ -17,20 +17,6 @@ enum class Gear
 	FiveGear
 };
 
-struct SpeedLimits
-{
-	int minSpeed = 0;
-	int maxSpeed = 0;
-
-	SpeedLimits() = default;
-
-	void SetLimits(int min, int max)
-	{
-		minSpeed = min;
-		maxSpeed = max;
-	}
-};
-
 class Car
 {
 public:
@@ -47,6 +33,21 @@ public:
 	bool SetSpeed(int speed);
 
 private:
+
+	struct SpeedLimits
+	{
+		int minSpeed = 0;
+		int maxSpeed = 0;
+
+		SpeedLimits() = default;
+
+		void SetLimits(int min, int max)
+		{
+			minSpeed = min;
+			maxSpeed = max;
+		}
+	};
+
 	void ChangeGearDependingSpeed(const SpeedLimits& speedLimits, int gear);
 	bool IsItPossibleToChangeSpeed(const SpeedLimits& speedLimits, int speed);
 

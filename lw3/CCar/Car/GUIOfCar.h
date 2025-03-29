@@ -2,10 +2,10 @@
 
 #include "Car.h"
 #include <functional>
+#include <map>
 #include <iostream>
 #include <vector>
 
-// синхронизировать имя файла и имя класса
 class GUIOfCar
 {
 public:
@@ -18,6 +18,7 @@ private:
 	void OutputStateEngine();
 	void OutputDirection();
 	void Info();
+	void SetGear
 	bool HandleCommandWithParams(const std::string& line);
 
 private:
