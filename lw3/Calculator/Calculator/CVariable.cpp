@@ -13,20 +13,10 @@ double CVariable::GetValue()
 void CVariable::SetValue(double value)
 {
 	m_value = value;
+	NotifyObserver();
 }
 
-void CVariable::RegisterObserver(std::weak_ptr<IObserver> observer)
+Dependencies CVariable::GetDependencies()
 {
-	m_observers.push_back(observer);
-}
-
-void CVariable::NotifyObserver()
-{
-	for (auto obs : m_observers)
-	{
-		if (!obs.expired())
-		{
-			obs.lock().get()->Update();
-		}
-	}
+	return { shared_from_this() };
 }

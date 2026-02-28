@@ -1,22 +1,24 @@
 #include "Calculator.h"
+
+#include <ostream>
 #include <stdexcept>
 
 void Calculator::DefineVariable(const std::string& name)
 {
-	if (m_variables.find(name) == m_variables.end())
+	if (m_variables.contains(name))
 	{
 		throw std::invalid_argument("Identifier just found: " + name);
 	}
-	std::shared_ptr<CVariable> newVar;
+	auto newVar = std::make_shared<CVariable>();
 	m_variables.insert({ name, newVar });
 }
 
 void Calculator::SetVariableValue(const std::string& name, double val)
 {
-	auto iterVar = m_variables.find(name);
+	const auto iterVar = m_variables.find(name);
 	if (iterVar == m_variables.end())
 	{
-		std::shared_ptr<CVariable> newVar;
+		auto newVar = std::make_shared<CVariable>();
 		newVar->SetValue(val);
 		m_variables.insert({ name, newVar });
 		return;
@@ -24,20 +26,17 @@ void Calculator::SetVariableValue(const std::string& name, double val)
 	iterVar->second->SetValue(val);
 }
 
-void Calculator::DefineFunction(const std::string& name, const std::string& left, 
+void Calculator::DefineFunction(const std::string& name, const std::string& left,
 	std::optional<OperationType>& op, const std::optional<std::string>& right)
 {	
-	if (m_functions.find(name) == m_functions.end())
+	if (m_functions.contains(name))
 	{
 		throw std::invalid_argument("Identifier just found: " + name);
 	}
 
-	auto iterLeft = m_variables.find(left);
-	if (iterLeft == m_variables.end())
-	{
-		throw std::invalid_argument("Identifier not found: " + left);
-	}
+	auto iterLeft = FindIdentifier(left);
 
+	std::shared_ptr<CFunction> newFunc;
 	if (right.has_value())
 	{
 		if (!op.has_value())
@@ -45,32 +44,27 @@ void Calculator::DefineFunction(const std::string& name, const std::string& left
 			throw std::invalid_argument("Operation not found");
 		}
 
-		auto iterRight = m_variables.find(right.value());
-		if (iterRight == m_variables.end())
-		{
-			throw std::invalid_argument("Identifier not found: " + right.value());
-		}
+		const auto iterRight = FindIdentifier(right.value());
 
-		std::shared_ptr<CFunction> newFunc = std::make_shared<CFunction>(iterLeft->second, iterRight->second, op);
-		m_functions.insert({ name, newFunc });
-		return;
+		newFunc = std::make_shared<CFunction>(iterLeft, iterRight, op.value());
+	}
+	else
+	{
+		newFunc = std::make_shared<CFunction>(iterLeft);
 	}
 
-	std::shared_ptr<CFunction> newFunc = std::make_shared<CFunction>(iterLeft->second);
-	m_functions.insert({ name, newFunc });
-	return;
+	m_functions.emplace(name, newFunc);
+	newFunc->SubscribeToDependencies();
 }
 
-std::shared_ptr<IValueGetter> Calculator::GetIdentificator(const std::string& name)
+std::shared_ptr<IValue> Calculator::GetIdentifier(const std::string& name)
 {
-	auto var = m_variables.find(name);
-	if (var != m_variables.end())
+	if (const auto var = m_variables.find(name); var != m_variables.end())
 	{
 		return var->second;
 	}
 
-	auto func = m_functions.find(name);
-	if (func != m_functions.end())
+	if (const auto func = m_functions.find(name); func != m_functions.end())
 	{
 		return func->second;
 	}
@@ -78,12 +72,26 @@ std::shared_ptr<IValueGetter> Calculator::GetIdentificator(const std::string& na
 	throw std::invalid_argument("Identifier not found: " + name);
 }
 
-std::map<std::string, std::shared_ptr<CVariable>> Calculator::GetVariables()
+std::unordered_map<std::string, std::shared_ptr<CVariable>> Calculator::GetVariables()
 {
 	return m_variables;
 }
 
-std::map<std::string, std::shared_ptr<CFunction>> Calculator::GetFunctions()
+std::unordered_map<std::string, std::shared_ptr<CFunction>> Calculator::GetFunctions()
 {
 	return m_functions;
+}
+
+std::shared_ptr<IValue> Calculator::FindIdentifier(const std::string& name)
+{
+	if (const auto iterVar = m_variables.find(name); iterVar != m_variables.end())
+	{
+		return iterVar->second;
+	}
+	if (const auto iterFn = m_functions.find(name); iterFn != m_functions.end())
+	{
+		return iterFn->second;
+	}
+
+	throw std::invalid_argument("Identifier not found: " + name);
 }

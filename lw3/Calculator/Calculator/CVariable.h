@@ -1,24 +1,19 @@
 #pragma once
 
-#include <vector>
+#include <unordered_set>
 
-#include "IValueGetter.h"
-#include "IObservable.h"
-#include "IObserver.h"
+#include "CObservable.h"
+#include "IValue.h"
 
-class CVariable : public IValueGetter, public IObservable
+class CVariable : public IValue, public CObservable, public std::enable_shared_from_this<CVariable>
 {
 public:
 	CVariable();
 
 	void SetValue(double value);
-
 	double GetValue() override;
-
-	void RegisterObserver(std::weak_ptr<IObserver> observer) override;
-	void NotifyObserver() override;
+	Dependencies GetDependencies() override;
 
 private:
 	double m_value;
-	std::vector<std::weak_ptr<IObserver>> m_observers;
 };
