@@ -1,10 +1,5 @@
-cmake_minimum_required(VERSION 3.20)
-project(Calculator)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include_directories(Calculator)
 
 add_library(Calculator_lib
         Calculator/Calculator.cpp
