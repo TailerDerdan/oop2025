@@ -3,14 +3,16 @@
 #include <iostream>
 #include <string>
 
-CBank::CBank(const Money cash)
+CBank::CBank(Money cash)
 {
+    ValidateMoney(cash);
     m_cash = cash;
-    m_nextId = -1;
+    m_nextId = 0;
 }
 
 void CBank::SendMoney(AccountId srcAccountId, AccountId dstAccountId, Money amount)
 {
+    ValidateMoney(amount);
     auto srcAccount = GetAccount(srcAccountId);
     auto dstAccount = GetAccount(dstAccountId);
 
