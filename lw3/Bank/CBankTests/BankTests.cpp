@@ -2,6 +2,7 @@
 
 #include "../CBank/Actors.h"
 #include "../CBank/CBank.h"
+#include "../CBank/Simulation.h"
 
 TEST_CASE("Test Bank")
 {
@@ -114,3 +115,13 @@ TEST_CASE("Test Actors")
     REQUIRE(bank->GetAccountBalance(mrBurns->GetAccountId()) == 4900);
     REQUIRE(bank->GetAccountBalance(homer->GetAccountId()) == 2150);
 }
+
+TEST_CASE("Test simulations")
+{
+    Simulation simulation;
+    simulation.Run(50);
+
+
+}
+
+//тест на очень долгую симмуляцию

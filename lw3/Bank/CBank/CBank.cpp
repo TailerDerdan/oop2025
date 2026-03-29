@@ -52,8 +52,8 @@ Money CBank::GetAccountBalance(AccountId accountId) const
 
 void CBank::WithdrawMoney(AccountId account, Money amount)
 {
-    auto it = GetAccount(account);
     ValidateMoney(amount);
+    auto it = GetAccount(account);
 
     if (it->second < amount)
     {

@@ -14,7 +14,7 @@ std::optional<Args> ParseArgs(int argc, char* argv[])
         return std::nullopt;
     }
 
-    Args args;
+    Args args{};
     args.iterations = std::stoull(argv[1]);
     return args;
 }

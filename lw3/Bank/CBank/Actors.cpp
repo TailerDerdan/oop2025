@@ -4,15 +4,15 @@
 
 namespace
 {
-    constexpr Money HOMER_TO_MARGE = 100;
+    constexpr Money HOMER_TO_MARGE = 300;
     constexpr Money HOMER_TO_MR_BURNS = 200;
-    constexpr Money HOMER_TO_CHILDREN = 50;
+    constexpr Money HOMER_TO_CHILDREN = 200;
     constexpr Money HOMER_TO_BART = 25;
     constexpr Money MARGE_TO_APU = 150;
-    constexpr Money BART_TO_APU = 100;
-    constexpr Money LISA_TO_APU = 100;
-    constexpr Money APU_TO_MR_BURNS = 200;
-    constexpr Money MR_BURNS_TO_HOMER = 500;
+    constexpr Money BART_TO_APU = 20;
+    constexpr Money LISA_TO_APU = 20;
+    constexpr Money APU_TO_MR_BURNS = 1000;
+    constexpr Money MR_BURNS_TO_HOMER = 100;
 }
 
 void Homer::Act(Actors &actors)

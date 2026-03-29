@@ -11,8 +11,11 @@ public:
 
     void Run(size_t iterations);
 
+    void Update();
+    [[nodiscard]] bool isNormalState();
+
 private:
-    [[nodiscard]] bool isNormalState() const;
+    void PrintStats();
 
     std::unique_ptr<CBank> m_bank;
 
@@ -23,6 +26,9 @@ private:
     std::unique_ptr<Apu> m_apu;
     std::unique_ptr<MrBurns> m_mrBurns;
 
-    Actors m_actors;
-    Money m_initialCash = 86000;
+    Actors m_actors{};
+    Money m_initialCash;
+
+    Money m_charactersCash;
+    Money m_charactersBalance;
 };
