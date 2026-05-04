@@ -62,6 +62,7 @@ std::string CTriangle::ToString() const
     {
         triangleStr += " " + ColorToString(GetFillColor().value());
     }
+    return triangleStr;
 }
 
 void CTriangle::Draw(ICanvas &canvas)

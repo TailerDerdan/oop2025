@@ -43,7 +43,7 @@ double CCircle::GetRadius() const
 
 std::string CCircle::ToString() const
 {
-    auto circleStr = "rectangle " +
+    auto circleStr = "circle " +
             PointToString(m_center) +
             " " +
             std::to_string(m_radius) +
