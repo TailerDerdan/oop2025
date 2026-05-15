@@ -1,1 +1,2 @@
 add_subdirectory(EquationRoot4)
+add_subdirectory(StringList)
