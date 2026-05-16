@@ -91,6 +91,13 @@ TEST_CASE("general operators")
 		CHECK(sl.size() == 4);
 		CHECK(*(sl.begin()) == FIRST);
 		CHECK(*(--sl.end()) == "new");
+
+		StringList sl2;
+		sl2.push_back(FIRST);
+		CHECK(sl2.size() == 1);
+		CHECK(*(sl2.begin()) == FIRST);
+		CHECK(*(--sl2.end()) == FIRST);
+		CHECK(sl2.begin() == (--sl2.end()));
 	}
 
 	SECTION("push_front")
@@ -100,6 +107,13 @@ TEST_CASE("general operators")
 		CHECK(sl.size() == 4);
 		CHECK(*(sl.begin()) == "new");
 		CHECK(*(--sl.end()) == THIRD);
+
+		StringList sl2;
+		sl2.push_front(FIRST);
+		CHECK(sl2.size() == 1);
+		CHECK(*(sl2.begin()) == FIRST);
+		CHECK(*(--sl2.end()) == FIRST);
+		CHECK(sl2.begin() == (--sl2.end()));
 	}
 
 	SECTION("pop_back")
@@ -144,7 +158,9 @@ TEST_CASE("general operators")
 
 		StringList sl2;
 		for (int i = 0; i < 100000; ++i)
+		{
 			sl.push_back(std::to_string(i));
+		}
 		CHECK_NOTHROW(sl.clear());
 		CHECK(sl.empty());
 	}
@@ -210,6 +226,7 @@ TEST_CASE("iterators")
 		CHECK_THROWS_AS(*end, std::out_of_range);
 	}
 
+	//разобраться с range based for
 	SECTION("range based for")
 	{
 		StringList sl = {FIRST, SECOND, THIRD};
@@ -221,11 +238,9 @@ TEST_CASE("iterators")
 		CHECK(result[0] == FIRST);
 		CHECK(result[1] == SECOND);
 		CHECK(result[2] == THIRD);
-
-		result.clear();
 	}
 
-	SECTION("reverse range based for")
+	SECTION("reverse for")
 	{
 		StringList sl = {FIRST, SECOND, THIRD};
 		std::vector<std::string> result;
